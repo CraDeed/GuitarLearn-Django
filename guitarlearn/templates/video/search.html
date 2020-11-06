@@ -1,0 +1,55 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+
+        <div class="col-sm-8">
+                <div class="mb-2" style="font-size: 24px;">
+                    <span>{{ q }} 검색결과!</span>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <form class="form-inline my-2 my-lg-0" action="{% url 'guitarlearn:video_search' %}" method="post">
+                    {% csrf_token %}
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="q" value="">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                </form>
+            </div>
+
+        {% if not videos %}
+
+            <div class="jumbotron jumbotron-fluid">
+                <div class="container">
+                    <h1 class="display-4">검색결과가 없어요!</h1>
+                    <p class="lead">정확하게 입려해주세용.....!</p>
+                </div>
+        </div>
+
+        {% else %}
+            
+                    {% for video in videos %}
+                        <div class="col-3 mb-3">
+                            <a href="{% url 'guitarlearn:video_detail' video.key %}">
+                                <div class="card">
+                                    <img
+                                        src="{{ video.thumbnail }}"
+                                        class="card-img-top"
+                                        alt="thumbnail"
+                                    />
+                                    <div class="card-body">
+                                        <div class="card-title">{{ video.title }}</div>
+                                        <p class="card-text">{{ video.youtuber }}</p>                        
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    {% endfor %}
+                
+
+        {% endif %}
+
+        </div>
+    </div>
+
+{% endblock %}

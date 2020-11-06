@@ -1,0 +1,105 @@
+
+{% extends "video/layout.html" %} {% load static %} {% block content %}
+
+
+
+<div class="container">
+
+    <div class="content" style="text-align:center;">
+        <div class="title is-4" style="font-size:24px;">
+            배우고 싶은 노래를 검색하세요!
+        </div>
+        <form class="form my-2 my-lg-0" action="{% url 'guitarlearn:search_list' %}" method="GET" submit="LoadingWithMask();">
+            <input class="btn-outline-info shadow mb-5 bg-white rounded" type="text" name="singer" placeholder="가수" />
+            <input class="btn-outline-info shadow mb-5 bg-white rounded" type="text" name="songtitle" placeholder="노래 제목" />
+                <button class="btn btn-outline-info my-2 my-sm-0" type="submit">
+                    <i class="fa fa-search"></i>
+                </button>
+        </form>
+    </div>
+    <div class='row'>
+        <div class="col-sm-8">
+            <div class="mb-2" style="font-size: 24px;">
+                <span>Today's Guitar Learn!</span>
+            </div>
+        </div>
+        {% comment %} <div class="col-sm-4">
+            <form class="form-inline">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-info my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </div> {% endcomment %}
+        <div class="col-sm-4">
+            <form class="form-inline my-2 my-lg-0" action="{% url 'guitarlearn:video_search' %}" method="post">
+                {% csrf_token %}
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="q" value="{{q}}">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        {% for video in video_list %}
+            <div class="col-3 mb-3">
+                <a href="{% url 'guitarlearn:video_detail' video.key %}">
+                    <div class="card">
+                        <img
+                            src="{{ video.thumbnail }}"
+                            class="card-img-top"
+                            alt="thumbnail"
+                        />
+                        <div class="card-body">
+                            <div class="card-title">{{ video.title }}</div>
+                            <p class="card-text">{{ video.youtuber }}</p>                        
+                        </div>
+                    </div>
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+    <script>
+        function test() {
+                LoadingWithMask("{% url 'guitarlearn:search_list' %}");
+                setTimeout("closeLoadingWithMask()", 3000);
+            }
+
+        function LoadingWithMask() {
+            //화면의 높이와 너비를 구합니다.
+            var maskHeight = $(document).height();
+            var maskWidth  = window.document.body.clientWidth;
+            
+            //화면에 출력할 마스크를 설정해줍니다.
+            var mask       ="<div id='mask' style='position:absolute; z-index:9000; background-color:#000000; display:none; left:0; top:0;'></div>";
+            var loadingImg ='';
+            
+            loadingImg +=" <img src='/backend/static/loading.gif' style='position: absolute; display: block; margin: 0px auto;'/>";
+        
+            //화면에 레이어 추가
+            $('body')
+                .append(mask)
+        
+            //마스크의 높이와 너비를 화면 것으로 만들어 전체 화면을 채웁니다.
+            $('#mask').css({
+                    'width' : maskWidth,
+                    'height': maskHeight,
+                    'opacity' :'0.3'
+            });
+        
+            //마스크 표시
+            $('#mask').show();
+        
+            //로딩중 이미지 표시
+            $('#loadingImg').append(loadingImg);
+            $('#loadingImg').show();
+        }
+        
+        function closeLoadingWithMask() {
+            $('#mask, #loadingImg').hide();
+            $('#mask, #loadingImg').empty(); 
+        }
+    </script>
+
+    <div id="loading"><img id="loading-image" src="{% static 'loading.gif' %}" alt="Loading..." /></div>
+    <script type="text/javascript"> $(window).load(function() { $('#loading').hide(); }); </script>

@@ -1,0 +1,62 @@
+{% extends 'video/layout.html' %}
+
+{% block content %}
+
+<div class="content" style="text-align:center;">
+    <div class="title is-4" style="font-size:24px;">
+        배우고 싶은 노래를 검색하세요!
+    </div>
+    <form class="form my-2 my-lg-0" action="{% url 'guitarlearn:search_list' %}" method="GET">
+        <input class="btn-outline-info shadow mb-5 bg-white rounded" type="text" name="singer" placeholder="가수" />
+        <input class="btn-outline-info shadow mb-5 bg-white rounded" type="text" name="songtitle" placeholder="노래 제목" />
+            <button class="btn btn-outline-info my-2 my-sm-0" type="submit">
+                <i class="fa fa-search"></i>
+            </button>
+    </form>
+</div>
+
+<div class="container" style="text-align: center;">
+    <script>
+    const tag = document.createElement("script");
+
+    tag.src = "https://www.youtube.com/iframe_api";
+    const firstScriptTag = document.getElementsByTagName("script")[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    let player;
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player("player", {
+            videoId: "{{ video.key }}",
+        });
+    }
+    </script>
+
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div id="player"></div>
+            <hr/>
+            <div class="row">
+                <div class="col-6">
+                    <div>{{ video.title }}</div>
+                    <div>{{ video.youtuber }}</div>
+                </div>
+                <div class="col-6">
+                    {% if request.user.is_authenticated %}
+                        {% if playlist.key != video.key %}
+                            <a href="{% url 'guitarlearn:video_like' video.key %}" style="color: inherit;">
+                                <i class="fa fa-heart">플레이리스트 추가</i>
+                            </a>
+                        {% else %}
+                            <a href="{% url 'guitarlearn:video_unlike' video.key %}" style="color: inherit;">
+                                <i class="fa fa-heart-o">플레이리스트 삭제</i>
+                            </a>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

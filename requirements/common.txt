@@ -1,0 +1,7 @@
+django~=3.0.0
+pillow
+django-bootstrap4
+requests
+bs4
+selenium
+lxml
